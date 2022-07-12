@@ -11,16 +11,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.tcs.jwt.filters.JwtFilter;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private UserDetailsService userDetailsService;
+  private JwtFilter jwtFilter;
 
   public WebSecurityConfig(
-    @Autowired UserDetailsService userDetailsService
+    @Autowired UserDetailsService userDetailsService,
+    @Autowired JwtFilter jwtFilter
   ) {
     this.userDetailsService = userDetailsService;
+    this.jwtFilter = jwtFilter;
   }
 
   @Bean
@@ -38,7 +44,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
       .csrf().disable()
       .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+      .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
