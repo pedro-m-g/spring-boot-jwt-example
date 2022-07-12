@@ -25,9 +25,9 @@ public class TokenGenerator {
     this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
   }
 
-  public String createToken(UserDetails userDetails) {
+  public String createToken(String username) {
     return Jwts.builder()
-      .setSubject(userDetails.getUsername())
+      .setSubject(username)
       .setIssuedAt(new Date())
       .setExpiration(new Date(System.currentTimeMillis() + ttl * 1000))
       .signWith(key)
